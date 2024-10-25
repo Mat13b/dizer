@@ -1,10 +1,12 @@
 import { Heart } from "lucide-react";
+import Card from "@/app/Components/Caroussel/Caroussel";
 
 interface FavoriteButtonProps {
-  Card: Card;
+  Card: typeof Card; // Utilisez 'typeof Card' pour obtenir le type
   isFavorite: boolean;
   handleFavoriteToggle: () => void;
-  className?: string; // Ajoutez cette ligne
+  className?: string;
+
 }
 
 const FavoriteButton: React.FC<FavoriteButtonProps> = ({ Card, isFavorite, handleFavoriteToggle }) => {

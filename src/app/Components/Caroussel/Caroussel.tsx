@@ -1,8 +1,9 @@
 "use client";
 
 import { ChevronLeft, ChevronRight, Heart, Plus, StepBack, Pause, StepForward, MicVocal , VolumeX , Volume1, Volume2} from "lucide-react";
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import FavoriteButton from "./FavoriteButton";
+
 // Définir une interface pour les données de la carte
 interface Card {
   id: number;
@@ -13,12 +14,6 @@ interface Card {
 }
 
 const cardData = [
-  {
-    id: 0,
-    title: "Favoris",
-    icon: "Heart",
-    isFavorite: false,
-  },
   {
     id: 1,
     title: "Image 1",
@@ -60,32 +55,52 @@ const cardData = [
 export default function Caroussel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [footerData, setFooterData] = useState(cardData[0]);
+  const [showFavorites, setShowFavorites] = useState(false);
+  const [favorites, setFavorites] = useState<Card[]>([]);
+  const [cards, setCards] = useState(cardData);
 
   const handleImageClick = (card: Card) => {
-    setFooterData(cardData.find((c) => c.id === card.id) || cardData[0]);
+    setFooterData(cards.find((c) => c.id === card.id) || cards[0]);
   };
 
   const getVisibleCards = () => {
     const startIndex = currentIndex * 2;
-    return cardData.slice(startIndex, startIndex + 2);
+    return cards.slice(startIndex, startIndex + 2);
   };
 
   const handleFavoriteToggle = (id: number) => {
-    setFooterData((prevData) => {
-      const updatedData = cardData.map((card) =>
+    setCards(prevCards => 
+      prevCards.map(card => 
         card.id === id ? { ...card, isFavorite: !card.isFavorite } : card
-      );
-      return updatedData.find((card) => card.id === id) || prevData;
-    });
+      )
+    );
   };
+
+  useEffect(() => {
+    const newFavorites = cards.filter(card => card.isFavorite);
+    setFavorites(newFavorites);
+    setFooterData(prevFooterData => ({
+      ...prevFooterData,
+      isFavorite: cards.find(card => card.id === prevFooterData.id)?.isFavorite || false
+    }));
+  }, [cards]);
 
   return (
     <div className="flex items-center justify-center gap-4 relative">
-      <ChevronLeft className="w-10 h-10" onClick={() => setCurrentIndex((currentIndex - 1 + Math.ceil(cardData.length / 2)) % Math.ceil(cardData.length / 2))} />
+      <ChevronLeft className="w-10 h-10" onClick={() => setCurrentIndex((currentIndex - 1 + Math.ceil(cards.length / 2)) % Math.ceil(cards.length / 2))} />
       <div className="gap-8 flex">
-        {getVisibleCards().map((card) => (
-          <div key={card.id} className="bg-gray-200 p-4 rounded shadow">
-            {card.icon === "Heart" && <Heart className="w-full h-full bg-red-500" />}
+        {getVisibleCards().map((card, index) => (
+          <div key={`${card.id}-${currentIndex}-${index}`} className="bg-gray-200 p-4 rounded shadow">
+            <button 
+              className="bg-red-500 text-white p-2 rounded" 
+              onClick={() => {
+                handleFavoriteToggle(card.id);
+                setShowFavorites(true);
+              }}
+            >
+              {card.isFavorite ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+            </button>
+            {card.isFavorite && <Heart className="w-6 h-6 text-red-500" />}
             <img
               src={card.image}
               alt={card.title}
@@ -93,24 +108,50 @@ export default function Caroussel() {
               onClick={() => handleImageClick(card)}
             />
             <h2 className="mt-2 text-lg font-bold">{card.title}</h2>
-            <FavoriteButton
-              Card={card}
-              isFavorite={card.isFavorite}
-              handleFavoriteToggle={() => handleFavoriteToggle(card.id)}
-            />
           </div>
         ))}
       </div>
-      <ChevronRight className="w-10 h-10" onClick={() => setCurrentIndex((currentIndex + 1) % Math.ceil(cardData.length / 2))} />
+      <ChevronRight className="w-10 h-10" onClick={() => setCurrentIndex((currentIndex + 1) % Math.ceil(cards.length / 2))} />
+      
+      {showFavorites && (
+        <div className="fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center">
+          <div className="bg-white p-4 rounded-lg">
+            <h2 className="text-xl font-bold mb-4">Favoris</h2>
+            {favorites.length > 0 ? (
+              <ul>
+                {favorites.map((fav) => (
+                  <li key={fav.id} className="flex items-center gap-2 mb-2">
+                    <img src={fav.image} alt={fav.title} className="w-10 h-10 object-cover rounded" />
+                    <span>{fav.title}</span>  
+                    <button className="bg-red-500 text-white p-2 rounded" onClick={() => handleFavoriteToggle(fav.id)}>supprimer</button>
+                  </li>
+                
+                ))}
+                 
+              </ul>
+            ) : (
+              <p>Aucun favori pour le moment.</p>
+            )}
+            <button 
+              className="mt-4 bg-blue-500 text-white p-2 rounded"
+              onClick={() => setShowFavorites(false)}
+            >
+              Fermer
+            </button>
+          </div>
+        </div>
+      )}
+
       <footer className="w-full bg-gray-700 text-white p-4 fixed bottom-0 left-0 right-0 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <img src={footerData.image} alt={footerData.title} className="w-20 h-20 rounded-full" />
             <p>{footerData.title}</p>
             <FavoriteButton
-              Card={footerData}
+              Card={() => <div>{footerData.title}</div>}
               isFavorite={footerData.isFavorite}
               handleFavoriteToggle={() => handleFavoriteToggle(footerData.id)}
             />
+            <Plus className="w-6 h-6" />
           </div>
           <div className="flex items-center gap-4">
             <StepBack className="w-6 h-6" />
