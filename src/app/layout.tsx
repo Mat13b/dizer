@@ -2,8 +2,7 @@
 
 import "./globals.css";
 import { useState } from "react";
-import Metadata from "./Metadata";
-
+import { Moon, Sun } from "lucide-react";
 
 export default function RootLayout({
   children,
@@ -18,11 +17,26 @@ export default function RootLayout({
 
   return (
     <html lang="fr" className={isDarkMode ? "dark" : ""}>
-      <body className={`antialiased ${isDarkMode ? "bg-gray-900 text-white" : "bg-white text-black "}`}>
-        <button onClick={toggleDarkMode} className="fixed top-4 right-4 bg-blue-500 text-white  p-2 rounded">
-          {isDarkMode ? "Mode Clair" : "Mode Sombre"}
+      <body 
+        className={`min-h-screen transition-all duration-300 ${
+          isDarkMode 
+            ? "bg-zinc-900 text-white" 
+            : "bg-zinc-50 text-black"
+        }`}
+      >
+        <button 
+          onClick={toggleDarkMode} 
+          className={`fixed top-4 right-4 p-3 rounded-full transition-all duration-300 z-50 ${
+            isDarkMode 
+              ? "bg-zinc-700 text-white hover:bg-zinc-600" 
+              : "bg-zinc-200 text-black hover:bg-zinc-300"
+          }`}
+        >
+          {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
         </button>
-        {children}
+        <main className="transition-all duration-300">
+          {children}
+        </main>
       </body>
     </html>
   );
