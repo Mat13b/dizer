@@ -4,6 +4,7 @@ import { ChevronLeft, ChevronRight, Heart, Plus, StepBack, Play, Pause, StepForw
 import { useState, useEffect, useRef } from "react";
 import FavoriteButton from "./FavoriteButton";
 import Input from "../Sidebar/input";
+import { useTheme } from '@/app/context/ThemeContext';
 
 interface Track {
   id: number; // Revenir à number pour Deezer
@@ -28,6 +29,8 @@ export default function Caroussel() {
   const [volume, setVolume] = useState(1);
   const [currentTime, setCurrentTime] = useState(0);
   const audioRef = useRef<HTMLAudioElement | null>(null);
+
+  const { isDarkMode } = useTheme();
 
   useEffect(() => {
     fetchTracks();
@@ -153,68 +156,81 @@ export default function Caroussel() {
   };
 
   return (
-    <div className="flex flex-col h-screen w-full">
-      {/* Barre de recherche */}
-      <div className="w-full max-w-md mx-auto px-4 mt-4">
+    <div className={`flex flex-col min-h-screen items-center justify-center px-4 md:px-8 lg:px-12 ${
+      isDarkMode ? 'bg-zinc-900 text-white' : 'bg-white text-black'
+    }`}>
+      {/* Barre de recherche responsive */}
+      <div className="w-full max-w-md mx-auto mb-16 mt-8">
         <Input onSearch={handleSearch} />
       </div>
 
-      {/* Section principale du carousel */}
-      <div className="flex-1 flex items-center justify-center px-4 sm:px-6 lg:px-8">
-        <div className="flex items-center justify-center gap-4 w-full max-w-7xl">
-          <ChevronLeft 
-            className="w-8 h-8 sm:w-10 sm:h-10 cursor-pointer transition-all duration-300 dark:text-zinc-300 hover:scale-110 flex-shrink-0" 
-            onClick={() => setCurrentIndex((currentIndex - 1 + Math.ceil(tracks.length / 2)) % Math.ceil(tracks.length / 2))} 
-          />
-          
-          {/* Container des cartes */}
-          <div className="flex gap-4 sm:gap-8 overflow-hidden justify-center">
-            {getVisibleTracks().map((track, index) => (
-              <div 
-                key={`${track.id}-${currentIndex}-${index}`} 
-                className="w-[280px] sm:w-[320px] flex-shrink-0 p-4 rounded-lg shadow-lg transition-all duration-300 dark:bg-zinc-800 bg-white hover:transform hover:scale-105"
-              >
-                <button 
-                  className="w-full bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition-all duration-300 text-sm sm:text-base" 
-                  onClick={() => {
-                    handleFavoriteToggle(track);
-                    setShowFavorites(true);
-                  }}
-                >
-                  {favorites.some(fav => fav.id === track.id) ? 'Retirer des favoris' : 'Ajouter aux favoris'}
-                </button>
-                
-                {favorites.some(fav => fav.id === track.id) && 
-                  <Heart className="w-6 h-6 text-red-500 mt-2" />
-                }
-                
-                <img
-                  src={track.album.cover}
-                  alt={track.title}
-                  className="w-full aspect-square object-cover rounded-lg mt-2"
-                  onClick={() => setFooterData(track)}
-                />
-                
-                <h2 className="mt-2 text-base sm:text-lg font-bold text-black dark:text-zinc-100 truncate">
-                  {track.title}
-                </h2>
-                <p className="text-sm sm:text-base text-gray-600 dark:text-zinc-400 truncate">
-                  {track.artist}
-                </p>
-              </div>
-            ))}
-          </div>
+      {/* Carrousel centré */}
+      <div className="flex items-center justify-center w-full max-w-6xl mx-auto">
+        <ChevronLeft 
+          className={`w-8 h-8 md:w-10 md:h-10 cursor-pointer transition-all duration-300 hover:scale-110 ${
+            isDarkMode ? 'text-zinc-300' : 'text-zinc-700'
+          }`}
+          onClick={() => setCurrentIndex((currentIndex - 1 + Math.ceil(tracks.length / 2)) % Math.ceil(tracks.length / 2))} 
+        />
 
-          <ChevronRight 
-            className="w-8 h-8 sm:w-10 sm:h-10 cursor-pointer transition-all duration-300 dark:text-zinc-300 hover:scale-110 flex-shrink-0" 
-            onClick={() => setCurrentIndex((currentIndex + 1) % Math.ceil(tracks.length / 2))} 
-          />
+        <div className="flex gap-4 md:gap-8 justify-center">
+          {getVisibleTracks().map((track, index) => (
+            <div 
+              key={`${track.id}-${currentIndex}-${index}`} 
+              className={`w-[280px] md:w-[320px] p-4 rounded-lg shadow-lg transition-all duration-300 ${
+                isDarkMode ? 'bg-zinc-900 text-white' : 'bg-white text-black'
+              }`}
+            >
+              <button 
+                className="w-full bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition-all duration-300 text-sm sm:text-base" 
+                onClick={() => {
+                  handleFavoriteToggle(track);
+                  setShowFavorites(true);
+                }}
+              >
+                {favorites.some(fav => fav.id === track.id) ? 'Retirer des favoris' : 'Ajouter aux favoris'}
+              </button>
+              
+              {favorites.some(fav => fav.id === track.id) && 
+                <Heart className="w-6 h-6 text-red-500 mt-2" />
+              }
+              
+              <img
+                src={track.album.cover}
+                alt={track.title}
+                className="w-full aspect-square object-cover rounded-lg mt-2"
+                onClick={() => setFooterData(track)}
+              />
+              
+              <h2 className={`mt-2 text-base sm:text-lg font-bold truncate ${
+                isDarkMode ? 'text-white' : 'text-black'
+              }`}>
+                {track.title}
+              </h2>
+              <p className={`text-sm sm:text-base truncate ${
+                isDarkMode ? 'text-zinc-300' : 'text-gray-600'
+              }`}>
+                {track.artist}
+              </p>
+            </div>
+          ))}
         </div>
+
+        <ChevronRight 
+          className={`w-8 h-8 md:w-10 md:h-10 cursor-pointer transition-all duration-300 hover:scale-110 ${
+            isDarkMode ? 'text-zinc-300' : 'text-zinc-700'
+          }`}
+          onClick={() => setCurrentIndex((currentIndex + 1) % Math.ceil(tracks.length / 2))} 
+        />
       </div>
 
-      {/* Footer */}
+      {/* Footer du lecteur */}
       {footerData && (
-        <footer className="fixed bottom-0 left-0 right-0 bg-white/95 dark:bg-zinc-800/95 backdrop-blur-lg border-t dark:border-zinc-700 shadow-lg p-2 sm:p-3 md:p-4">
+        <footer className={`fixed bottom-0 left-0 right-0 backdrop-blur-lg border-t shadow-lg p-2 sm:p-3 md:p-4 ${
+          isDarkMode 
+            ? 'bg-zinc-900/95 border-zinc-700 text-white' 
+            : 'bg-white/95 border-gray-200 text-black'
+        }`}>
           <audio
             ref={audioRef}
             onTimeUpdate={handleTimeUpdate}
@@ -232,10 +248,14 @@ export default function Caroussel() {
                 className="w-12 h-12 sm:w-16 sm:h-16 rounded-lg shadow-md" 
               />
               <div className="hidden sm:block">
-                <p className="font-bold text-black dark:text-zinc-100 truncate max-w-[150px]">
+                <p className={`font-bold truncate max-w-[150px] ${
+                  isDarkMode ? 'text-white' : 'text-black'
+                }`}>
                   {footerData.title}
                 </p>
-                <p className="text-sm text-gray-600 dark:text-zinc-400 truncate max-w-[150px]">
+                <p className={`text-sm truncate max-w-[150px] ${
+                  isDarkMode ? 'text-zinc-300' : 'text-gray-600'
+                }`}>
                   {footerData.artist}
                 </p>
               </div>
