@@ -2,13 +2,13 @@
 
 import "./globals.css";
 import { useState } from "react";
-import { Moon, Sun } from "lucide-react";
+import { Moon } from "lucide-react";
 
 export default function RootLayout({
   children,
-}: Readonly<{
+}: {
   children: React.ReactNode;
-}>) {
+}) {
   const [isDarkMode, setIsDarkMode] = useState(false);
 
   const toggleDarkMode = () => {
@@ -16,27 +16,45 @@ export default function RootLayout({
   };
 
   return (
-    <html lang="fr" className={isDarkMode ? "dark" : ""}>
+    <html lang="fr" className="scroll-smooth">
+      <head>
+        <title>Dizer</title>
+        <meta name="description" content="Application de streaming musical" />
+        <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+      </head>
       <body 
-        className={`min-h-screen transition-all duration-300 ${
-          isDarkMode 
-            ? "bg-zinc-900 text-white" 
-            : "bg-zinc-50 text-black"
+        className={`m-0 p-0 min-h-screen w-full transition-colors duration-300 overflow-x-hidden ${
+          isDarkMode ? "bg-zinc-900" : "bg-white"
         }`}
       >
         <button 
           onClick={toggleDarkMode} 
-          className={`fixed top-4 right-4 p-3 rounded-full transition-all duration-300 z-50 ${
-            isDarkMode 
-              ? "bg-zinc-700 text-white hover:bg-zinc-600" 
-              : "bg-zinc-200 text-black hover:bg-zinc-300"
-          }`}
+          className={`fixed top-4 sm:top-5 md:top-6 lg:top-8 
+            right-4 sm:right-5 md:right-6 lg:right-8 
+            p-2 sm:p-2.5 md:p-3
+            rounded-full 
+            transition-all duration-300 
+            z-50 
+            hover:scale-110
+            ${isDarkMode 
+              ? "bg-zinc-200 rotate-[360deg]" 
+              : "bg-zinc-200 rotate-0"
+            }`}
         >
-          {isDarkMode ? <Sun className="w-5 h-5" /> : <Moon className="w-5 h-5" />}
+          <Moon 
+            className={`w-4 h-4 sm:w-4.5 sm:h-4.5 md:w-5 md:h-5 
+              transition-colors duration-300 
+              ${isDarkMode ? "text-zinc-900" : "text-black"}`} 
+          />
         </button>
-        <main className="transition-all duration-300">
-          {children}
-        </main>
+
+        <div className="flex flex-col min-h-screen w-full m-0 p-0">
+          <div className="flex-1 flex items-center justify-center w-full">
+            <main className="w-full transition-all duration-300">
+              {children}
+            </main>
+          </div>
+        </div>
       </body>
     </html>
   );
