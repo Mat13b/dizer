@@ -51,8 +51,7 @@ export default function Caroussel() {
         setFooterData(data.tracks[0]);
       }
     } catch (error: unknown) {
-      const apiError = error as ApiError;
-      console.error('Erreur lors du chargement des pistes:', apiError.message);
+      console.error('Erreur lors du chargement des pistes:', error);
     }
   };
 
@@ -157,8 +156,8 @@ export default function Caroussel() {
         setFooterData(data.tracks[0]);
         setCurrentIndex(0);
       }
-    } catch (error) {
-      console.error('Erreur lors de la recherche:', error);
+    } catch (_error: unknown) {
+      console.error('Erreur lors de la recherche');
     }
   };
 
