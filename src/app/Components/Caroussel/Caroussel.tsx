@@ -50,8 +50,9 @@ export default function Caroussel() {
       if (data.tracks.length > 0) {
         setFooterData(data.tracks[0]);
       }
-    } catch (error: any) {
-      console.error('Erreur lors du chargement des pistes:', error.message);
+    } catch (error: unknown) {
+      const apiError = error as ApiError;
+      console.error('Erreur lors du chargement des pistes:', apiError.message);
     }
   };
 
@@ -73,8 +74,8 @@ export default function Caroussel() {
           setFavorites([...favorites, track]);
         }
       }
-    } catch (error) {
-      console.error('Erreur lors de la gestion des favoris:', error);
+    } catch (_error) {
+      console.error('Erreur lors de la gestion des favoris');
     }
   };
 
