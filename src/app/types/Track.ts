@@ -7,7 +7,6 @@ export interface Track {
     cover: string;
   };
   preview: string;
-  quality?: 'FLAC' | 'MP3_320' | 'MP3_128';
   lyrics?: Array<{
     timestamp: number;
     text: string;

@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, Heart, Plus, StepBack, Play, Pause, StepForward, MicVocal, VolumeX, Volume1, Volume2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Heart, StepBack, Play, Pause, StepForward, MicVocal, VolumeX, Volume2 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import FavoriteButton from "./FavoriteButton";
 import Input from "../Sidebar/input";
@@ -21,7 +21,6 @@ export default function Caroussel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [tracks, setTracks] = useState<Track[]>([]);
   const [footerData, setFooterData] = useState<Track | null>(null);
-  const [showFavorites, setShowFavorites] = useState(false);
   const [favorites, setFavorites] = useState<Track[]>([]);
   
   // États pour le lecteur audio
@@ -185,7 +184,6 @@ export default function Caroussel() {
                 className="w-full bg-red-500 text-white p-2 rounded-lg hover:bg-red-600 transition-all duration-300 text-sm sm:text-base" 
                 onClick={() => {
                   handleFavoriteToggle(track);
-                  setShowFavorites(true);
                 }}
               >
                 {favorites.some(fav => fav.id === track.id) ? 'Retirer des favoris' : 'Ajouter aux favoris'}
