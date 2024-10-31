@@ -1,7 +1,8 @@
 import { NextResponse } from 'next/server';
 import { DeezerResponse, DeezerTrack } from '@/app/types/DeezerTypes';
 
-const DEEZER_API_URL = 'https://api.deezer.com';
+// Utiliser la variable d'environnement
+const DEEZER_API_URL = process.env.DEEZER_API_URL || 'https://api.deezer.com';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
@@ -27,7 +28,8 @@ export async function GET(request: Request) {
         preview: track.preview
       }))
     });
-  } catch (_error) {
+  } catch (error) {
+    console.error('Erreur API:', error);
     return NextResponse.json(
       { error: 'Erreur lors de la récupération des données' },
       { status: 500 }
