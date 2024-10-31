@@ -17,6 +17,13 @@ interface Track {
   preview: string;
 }
 
+// Définir un type approprié pour l'erreur
+interface ApiError {
+  message: string;
+  status?: number;
+}
+
+
 export default function Caroussel() {
   const [currentIndex, setCurrentIndex] = useState(0);
   const [tracks, setTracks] = useState<Track[]>([]);
@@ -43,8 +50,8 @@ export default function Caroussel() {
       if (data.tracks.length > 0) {
         setFooterData(data.tracks[0]);
       }
-    } catch (error) {
-      console.error('Erreur lors du chargement des pistes:', error);
+    } catch (error: any) {
+      console.error('Erreur lors du chargement des pistes:', error.message);
     }
   };
 
