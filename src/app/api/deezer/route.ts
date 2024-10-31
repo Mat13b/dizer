@@ -1,43 +1,36 @@
 import { NextResponse } from 'next/server';
+import { DeezerResponse, DeezerTrack } from '@/app/types/DeezerTypes';
 
-const DEEZER_API_URL = process.env.DEEZER_API_URL;
+const DEEZER_API_URL = 'https://api.deezer.com';
 
 export async function GET(request: Request) {
   const { searchParams } = new URL(request.url);
   const query = searchParams.get('q') || 'pop';
 
   try {
-    const response = await fetch(
-      `${DEEZER_API_URL}/search?q=${encodeURIComponent(query)}`,
-      {
-        headers: {
-          'Content-Type': 'application/json',
-        },
-      }
-    );
+    const response = await fetch(`${DEEZER_API_URL}/search?q=${encodeURIComponent(query)}`);
+    const data = (await response.json()) as DeezerResponse;
 
     if (!response.ok) {
-      throw new Error(`Erreur API: ${response.status}`);
+      throw new Error('Erreur API Deezer');
     }
 
-    const data = await response.json();
-    
-    const tracks = data.data.map((track: any) => ({
-      id: track.id,
-      title: track.title,
-      artist: track.artist.name,
-      album: {
-        title: track.album.title,
-        cover: track.album.cover_medium,
-      },
-      preview: track.preview,
-    }));
-
-    return NextResponse.json({ tracks });
-  } catch (error) {
-    console.error('Erreur API Deezer:', error);
+    return NextResponse.json({
+      tracks: data.data.map((track: DeezerTrack) => ({
+        id: track.id,
+        title: track.title,
+        artist: track.artist.name,
+        album: {
+          title: track.album.title,
+          cover: track.album.cover_medium
+        },
+        preview: track.preview
+      }))
+    });
+  } catch (error: unknown) {
+    console.error('Erreur API:', error instanceof Error ? error.message : 'Erreur inconnue');
     return NextResponse.json(
-      { error: 'Erreur lors de la récupération des pistes' },
+      { error: 'Erreur lors de la récupération des données' },
       { status: 500 }
     );
   }
