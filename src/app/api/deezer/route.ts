@@ -27,8 +27,7 @@ export async function GET(request: Request) {
         preview: track.preview
       }))
     });
-  } catch (error: unknown) {
-    console.error('Erreur API:', error instanceof Error ? error.message : 'Erreur inconnue');
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erreur lors de la récupération des données' },
       { status: 500 }

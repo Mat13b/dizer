@@ -1,6 +1,6 @@
 "use client";
 
-import { ChevronLeft, ChevronRight, Heart, StepBack, Play, Pause, StepForward, MicVocal, VolumeX, Volume2 } from "lucide-react";
+import { ChevronLeft, ChevronRight, Heart, Plus, StepBack, Play, Pause, StepForward, MicVocal, VolumeX, Volume1, Volume2 } from "lucide-react";
 import { useState, useEffect, useRef } from "react";
 import FavoriteButton from "./FavoriteButton";
 import Input from "../Sidebar/input";

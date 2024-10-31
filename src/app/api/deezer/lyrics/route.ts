@@ -15,7 +15,7 @@ export async function GET(request: Request) {
     return NextResponse.json({
       lyrics: data.lyrics || []
     });
-  } catch (error) {
+  } catch (_error) {
     return NextResponse.json(
       { error: 'Erreur lors de la récupération des paroles' },
       { status: 500 }
